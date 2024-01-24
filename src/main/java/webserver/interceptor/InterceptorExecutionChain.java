@@ -9,6 +9,7 @@ import java.util.List;
 public class InterceptorExecutionChain {
   private final List<Interceptor> interceptors = new ArrayList<>();
   public InterceptorExecutionChain(){
+    interceptors.add(new SessionSettingInterceptor());
     interceptors.add(new LoginUserValidateInterceptor());
   }
   public boolean applyPreHandle(MyHttpServletRequest request){
