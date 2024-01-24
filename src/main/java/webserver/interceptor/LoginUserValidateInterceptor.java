@@ -2,9 +2,9 @@ package webserver.interceptor;
 
 import webserver.MyHttpServletRequest;
 
-public class LoginUserValidateInterceptor implements RequestHandlerInterceptor{
+public class LoginUserValidateInterceptor implements Interceptor {
   @Override
   public boolean preHandle(MyHttpServletRequest request) {
-    return RequestHandlerInterceptor.super.preHandle(request);
+    return Interceptor.super.preHandle(request);
   }
 }

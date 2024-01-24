@@ -3,7 +3,7 @@ package webserver.interceptor;
 import webserver.MyHttpServletRequest;
 import webserver.MyHttpServletResponse;
 
-public interface RequestHandlerInterceptor {
+public interface Interceptor {
   default boolean preHandle(MyHttpServletRequest request){
     return true;
   }
