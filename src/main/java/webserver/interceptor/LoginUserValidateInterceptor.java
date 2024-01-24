@@ -12,11 +12,17 @@ public class LoginUserValidateInterceptor implements Interceptor {
   public boolean preHandle(MyHttpServletRequest request) {
     UUID sessionId = CustomSession.currentSession.get();
     if(needAuthorization(request))
-      return sessionId != null && CustomSession.findSessionByKey(sessionId) != null;
+      if(!successAuthorization(sessionId))
+        throw new AuthorizationException();
     return true;
   }
   private boolean needAuthorization(MyHttpServletRequest request){
     String uri = request.getUri();
     return Arrays.asList(includePath).contains(uri);
+  }
+  private boolean successAuthorization(UUID sessionId){
+    if(sessionId==null)
+      return false;
+    return CustomSession.findSessionByKey(sessionId) != null;
   }
 }
