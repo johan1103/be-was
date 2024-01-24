@@ -47,6 +47,10 @@ public class CustomSession {
     return sessionKey;
   }
 
+  public static SessionValue findSessionByKey(UUID sessionKey){
+    return session.get(sessionKey);
+  }
+
   public static SessionValue getSessionValue(UUID sessionKey){
     return CustomSession.session.get(sessionKey);
   }
