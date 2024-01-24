@@ -16,9 +16,9 @@ public class CustomSession {
     String rawCookie = request.getCookie();
     if(rawCookie==null)
       return;
-    String[] cookies = rawCookie.split(";");
+    String[] cookies = rawCookie.split("; ");
     Optional<String> sessionKeyCookie = Arrays.stream(cookies)
-            .filter((String s)->"SID".equals(findCookieKey(s))).findFirst();
+            .filter((String s)->"sid".equals(findCookieKey(s))).findFirst();
     sessionKeyCookie.ifPresent(s -> currentSession.set(UUID.fromString(findCookieValue(s))));
   }
   public static void finishCurrentSession(){
