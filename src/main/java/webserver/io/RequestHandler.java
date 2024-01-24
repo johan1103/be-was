@@ -15,11 +15,13 @@ import webserver.MyHttpServletResponse;
 import webserver.handler.ControllerHandler;
 import webserver.handler.Handler;
 import webserver.handler.StaticResourceHandler;
+import webserver.interceptor.InterceptorExecutionChain;
 import webserver.session.CustomSession;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
     private final ExceptionResolver exceptionResolver = new ExceptionResolver();
+    private final InterceptorExecutionChain interceptor = new InterceptorExecutionChain();
     private final List<Handler> handlers = new ArrayList<>();
     private Socket connection;
 
@@ -47,9 +49,13 @@ public class RequestHandler implements Runnable {
                 }
                 if(handler==null)
                     throw new RuntimeException();
+                if(!interceptor.applyPreHandle(httpServletRequest))
+                    throw new RuntimeException();
                 httpResponse = handler.handle(httpServletRequest);
             }catch (Exception e){
                 httpResponse = exceptionResolver.resolve(e);
+            }finally {
+                interceptor.afterCompletion(httpResponse);
             }
             httpResponse.addCookieHeader();
             HttpResponseBuilder responseBuilder = new HttpResponseBuilder(new DataOutputStream(out));
