@@ -20,6 +20,10 @@ public class MyController {
   public String loginForm(){
     return "/templates/user/login.html";
   }
+  @GetMapping(uri = "/user/list")
+  public String userListpage(){
+    return "/templates/user/list.html";
+  }
   @GetMapping(uri = "/index.html")
   public String mainPage(){
     Map.Entry<String,String> e;
