@@ -17,9 +17,15 @@ public class CustomSession {
     if(rawCookie==null)
       return;
     String[] cookies = rawCookie.split("; ");
-    Optional<String> sessionKeyCookie = Arrays.stream(cookies)
-            .filter((String s)->"sid".equals(findCookieKey(s))).findFirst();
-    sessionKeyCookie.ifPresent(s -> currentSession.set(UUID.fromString(findCookieValue(s))));
+    try {
+      String sessionKeyCookie = Arrays.stream(cookies)
+              .filter((String s)->"sid".equals(findCookieKey(s))).findFirst().orElseThrow(RuntimeException::new);
+      UUID sessionKey = UUID.fromString(sessionKeyCookie);
+      SessionValue findSession = session.get(sessionKey);
+      if(findSession!=null)
+        currentSession.set(sessionKey);
+    }catch (Exception ignored){
+    }
   }
   public static void finishCurrentSession(){
     currentSession.remove();
