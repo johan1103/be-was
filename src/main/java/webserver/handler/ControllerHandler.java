@@ -5,6 +5,7 @@ import webserver.MyHttpServletResponse;
 import webserver.handler.Handler;
 import webserver.mapper.ControllerMapper;
 import webserver.mapper.ParameterMapper;
+import webserver.view.View;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,10 +35,12 @@ public class ControllerHandler implements Handler {
   }
 
   public MyHttpServletResponse handleController(){
-    String controllerReturnValue="";
-    //controller method를 실행하고 string값을 받음 (redirect uri 혹은 resource path)
+    View controllerReturnView;
+    MyHttpServletResponse response = new MyHttpServletResponse();
+    //controller method를 실행하고 view값 받음 (내부적으로 html body, attributes들을 가지고 있음)
     try {
-      controllerReturnValue = (String) method.invoke(controllerInstance, args);
+      controllerReturnView = (View) method.invoke(controllerInstance, args);
+      response = controllerReturnView.buildResponse();
     }catch (InvocationTargetException targetException){
       if (RuntimeException.class.isAssignableFrom(targetException.getTargetException().getClass()))
         throw (RuntimeException) targetException.getTargetException();
@@ -46,7 +49,7 @@ public class ControllerHandler implements Handler {
     }catch (IllegalAccessException accessException){
       throw new RuntimeException();
     }
-    return new MyHttpServletResponse(controllerReturnValue);
+    return response;
   }
 
   public void setByControllerMapper(Object controllerInstance,Method method){
