@@ -18,18 +18,12 @@ public class MyHttpServletResponse {
   //Controller로부터 적절한 응답을 받았을 때 호출하는 생성자
   //redirect 여부를 우선적으로 구분 후 redirect여부에 따라 헤더값 & body값 다르게 설정
   //예외가 발생했을 때 Http 예외 응답 정보를 담을 수 있도록 추가 생성자 작성 예정
-  public MyHttpServletResponse(String controllerReturnValue){
-    headers.put("Content-Type","text/html;charset=UTF-8");
-    int redirectIndex=controllerReturnValue.indexOf("redirect:");
+  public static MyHttpServletResponse redirect(String redirectUri){
+    MyHttpServletResponse response = new MyHttpServletResponse(HttpStatus.REDIRECT,null);
+    response.addHeader("Content-Type","text/html;charset=UTF-8");
+    response.addHeader("Location",redirectUri);
     //redirect 응답일땐 redirectIndex는 0
-    if(redirectIndex==0){
-      this.httpStatus=HttpStatus.REDIRECT;
-      headers.put("Location",controllerReturnValue.replace("redirect:",""));
-      return;
-    }
-    //redirect 응답이 아닐 땐 200 응답
-    this.httpStatus=HttpStatus.OK;
-    setBody(controllerReturnValue);
+    return response;
   }
   public MyHttpServletResponse(){
     httpStatus=HttpStatus.BAD_REQUEST;
@@ -73,5 +67,8 @@ public class MyHttpServletResponse {
     UUID cookie = CustomSession.setCookie.get();
     if(cookie!=null)
       headers.put("Set-Cookie","sid="+cookie+"; PATH=/");
+  }
+  public void addHeader(String key,String value){
+    this.headers.put(key,value);
   }
 }

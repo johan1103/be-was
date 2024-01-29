@@ -18,6 +18,6 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(AuthorizationException.class)
   public MyHttpServletResponse handleAuthorizationFailedRequest(AuthorizationException e){
-    return new MyHttpServletResponse("redirect:/index.html");
+    return MyHttpServletResponse.redirect("/index.html");
   }
 }
