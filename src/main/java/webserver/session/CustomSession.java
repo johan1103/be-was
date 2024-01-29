@@ -1,5 +1,7 @@
 package webserver.session;
 
+import db.Database;
+import model.User;
 import webserver.MyHttpServletRequest;
 
 import java.time.ZonedDateTime;
@@ -19,7 +21,8 @@ public class CustomSession {
     String[] cookies = rawCookie.split("; ");
     try {
       String sessionKeyCookie = Arrays.stream(cookies)
-              .filter((String s)->"sid".equals(findCookieKey(s))).findFirst().orElseThrow(RuntimeException::new);
+              .filter((String s)->"sid".equals(findCookieKey(s))).findFirst()
+              .map((s)->s.replace("sid=","")).orElseThrow(RuntimeException::new);
       UUID sessionKey = UUID.fromString(sessionKeyCookie);
       SessionValue findSession = session.get(sessionKey);
       if(findSession!=null)
@@ -51,6 +54,15 @@ public class CustomSession {
       return null;
     CustomSession.session.put(sessionKey,createdSession);
     return sessionKey;
+  }
+  public static User getUserFromCurrentSession(){
+    UUID sessionId = currentSession.get();
+    if(sessionId==null)
+      return null;
+    SessionValue sessionValue = CustomSession.findSessionByKey(sessionId);
+    if(sessionValue==null)
+      return null;
+    return Database.findUserById(sessionValue.getUserId());
   }
 
   public static SessionValue findSessionByKey(UUID sessionKey){
